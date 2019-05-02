@@ -1,0 +1,11 @@
+{
+  "Country": "//article/header/div/div[1]/a/span",
+  "Title": "//article/header/div/h1/a",
+  "Date": "//article/header/div/div[2]",
+  "Author": "//div[contains(@class, 'author-name')]//div[contains(@class, 'bio-text')]/span[contains(@class, 'author')]//span[contains(@class, 'author-title')]",
+  "AuthorBio": "//div[contains(@class, 'author-name')]//div[contains(@class, 'bio-text')]/div[contains(@class, 'author-bio')]",
+  "Paragraphs": {
+    "_xpath": "//*[@id='article-content']",
+    "Text": ".//p[contains(@class, 'element-paragraph')]"
+  }
+}
