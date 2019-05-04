@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Globalization;
 using System.IO;
-using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using OpenScraping;
 using OpenScraping.Config;
@@ -17,7 +15,7 @@ namespace NZHeraldScraper
             var url = Console.ReadLine();
             Console.WriteLine();
 
-            if (url.Contains("https://www.nzherald.co.nz/nz/news/article.cfm"))
+            if (url.Contains("https://www.nzherald.co.nz/") && url.Contains("/article.cfm"))
             {
                 var uri = new Uri(url);
 
@@ -63,24 +61,9 @@ namespace NZHeraldScraper
             var stream = new StreamReader(new MemoryStream(Properties.Resources.config));
             var config = StructuredDataConfig.ParseJsonString(stream.ReadToEnd());
             var scraper = new StructuredDataExtractor(config);
-            dynamic raw = JsonConvert.DeserializeObject(JsonConvert.SerializeObject(scraper.Extract(html)));
+            var json = JsonConvert.SerializeObject(scraper.Extract(html));
 
-            // Clean raw data and bind to object.
-            var article = new Article
-            {
-                Country = raw.Country.ToString().Trim(),
-                Title = raw.Title.ToString().Trim(),
-                Date = DateTime.ParseExact(Regex.Replace(raw.Date.ToString(), "(?<=pm|am).+", string.Empty).Trim(), "d MMMM, yyyy h:mmtt", CultureInfo.InvariantCulture),
-                Author = $"{raw.Author.ToString().Trim()} ({raw.AuthorBio.ToString().Trim()})",
-                Body = ""
-            };
-            foreach (var item in raw.Paragraphs.Text)
-            {
-                article.Body += $"{Utility.RemoveHtmlTags(item.ToString())}\n\n";
-            }
-            article.Body = article.Body.Trim();
-
-            return article;
+            return new Article(json);
         }
     }
 }
